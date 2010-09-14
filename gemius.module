@@ -1,5 +1,9 @@
 <?php 
 
+function gemius_perm() {
+  return array('administer gemius analytics');
+}
+
 function gemius_menu() {
   $items['admin/settings/gemius'] = array(
     'title' => 'Gemius Statistics',
