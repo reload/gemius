@@ -1,0 +1,75 @@
+<?php 
+
+function gemius_menu() {
+  $items['admin/settings/gemius'] = array(
+    'title' => 'Gemius Statistics',
+    'description' => 'Configure Gemius statistics',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gemius_admin_settings_form'),
+    'access arguments' => array('administer gemius statistics'),
+    'file' => 'gemius.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+/*
+ * implementation of hook_footer()
+ */
+function gemius_footer($main = 0) {
+  
+  // if key does not exist - do nothin
+  if(!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()){
+    return;
+  }
+  
+  $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
+  drupal_add_js($script, 'inline', 'footer');
+  
+  drupal_add_js(drupal_get_path('module', 'gemius').'/xgemius.js', '', 'footer');
+
+}
+/*
+ * @return true if page allowed
+ */
+function _gemius_visibility_pages(){
+ 
+  $pages = variable_get('gemius_pages', '');
+  
+  $path = drupal_get_path_alias($_GET['q']);
+  // Compare with the internal and path alias (if any).
+  $page_match = drupal_match_path($path, $pages);
+  if ($path != $_GET['q']) {
+    $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+  }
+  return (boolean) $page_match;
+}
+
+/**
+ * 
+ * @return true if user is allowed
+ */
+function _gemius_visibility_user(){
+  global $user;
+
+  $enabled = FALSE;
+  $roles = variable_get('gemius_roles', array());
+
+  if (array_sum($roles) > 0) {
+    // One or more roles are selected for tracking.
+    foreach (array_keys($user->roles) as $rid) {
+      // Is the current user a member of one role enabled for tracking?
+      if (isset($roles[$rid]) && $rid == $roles[$rid]) {
+        // Current user is a member of a role that should be tracked.
+        $enabled = TRUE;
+        break;
+      }
+    }
+  }
+  else {
+    // No role is selected for tracking, therefor all roles should be tracked.
+    $enabled = TRUE;
+  }
+
+  return (boolean) !$enabled;
+}
