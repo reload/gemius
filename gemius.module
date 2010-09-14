@@ -10,7 +10,7 @@ function gemius_menu() {
     'description' => 'Configure Gemius statistics',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('gemius_admin_settings_form'),
-    'access arguments' => array('administer gemius statistics'),
+    'access arguments' => array('administer gemius analytics'),
     'file' => 'gemius.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );
