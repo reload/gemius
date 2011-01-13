@@ -15,7 +15,7 @@ function gemius_admin_settings_form(&$form_state) {
     '#title' => t('Gemius identifier'),
     '#default_value' => variable_get('gemius_key', ''),
     '#size' => 30,
-    '#maxlength' => 30,
+    '#maxlength' => 255,
     '#required' => TRUE,
     '#description' => t('The identifier'),
   );
