@@ -28,11 +28,24 @@ function gemius_footer($main = 0) {
   }
   
   $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
-  drupal_add_js($script, 'inline', 'header');
   
   drupal_add_js(drupal_get_path('module', 'gemius').'/xgemius.js', '', 'footer');
 
 }
+
+/*
+ * implementation of hook_init()
+ */
+function gemius_init($main = 0) {
+
+  // if key does not exist - do nothin
+  if(!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()){
+    return;
+  }
+  $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
+  drupal_add_js($script, 'inline');
+}
+
 /*
  * @return true if page allowed
  */
