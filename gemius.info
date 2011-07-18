@@ -1,5 +1,5 @@
 ; $Id:$
 name = Gemius
 description = A tracking module, much similar to google analytics
-core = 6.x
+core = 7.x
 package = Statistics
