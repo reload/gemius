@@ -1,9 +1,15 @@
-<?php 
+<?php
 
+/**
+ * Implements hook_perm().
+ */
 function gemius_perm() {
   return array('administer gemius analytics');
 }
 
+/**
+ * Implements hook_menu().
+ */
 function gemius_menu() {
   $items['admin/settings/gemius'] = array(
     'title' => 'Gemius Statistics',
@@ -17,42 +23,31 @@ function gemius_menu() {
 
   return $items;
 }
-/*
- * implementation of hook_footer()
- */
-function gemius_footer($main = 0) {
-  
-  // if key does not exist - do nothin
-  if(!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()){
-    return;
-  }
-  
-  $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
-  
-  drupal_add_js(drupal_get_path('module', 'gemius').'/xgemius.js', '', 'footer');
 
-}
-
-/*
- * implementation of hook_init()
+/**
+ * Implements hook_init().
+ *
+ * Gemius needs is javascript in the header area.
  */
 function gemius_init($main = 0) {
 
-  // if key does not exist - do nothin
-  if(!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()){
+  // if key does not exist - do nothing.
+  if (!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()) {
     return;
   }
+
   $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
-  drupal_add_js($script, 'inline');
+  drupal_add_js($script, 'inline', 'header');
+  drupal_add_js(drupal_get_path('module', 'gemius').'/xgemius.js', '', 'header');
 }
 
 /*
  * @return true if page allowed
  */
 function _gemius_visibility_pages(){
- 
+
   $pages = variable_get('gemius_pages', '');
-  
+
   $path = drupal_get_path_alias($_GET['q']);
   // Compare with the internal and path alias (if any).
   $page_match = drupal_match_path($path, $pages);
@@ -63,7 +58,7 @@ function _gemius_visibility_pages(){
 }
 
 /**
- * 
+ *
  * @return true if user is allowed
  */
 function _gemius_visibility_user(){
