@@ -29,23 +29,29 @@ function gemius_menu() {
  *
  * Gemius needs is javascript in the header area.
  */
-function gemius_init($main = 0) {
-
+function gemius_init() {
   // if key does not exist - do nothing.
   if (!($key = variable_get('gemius_key', '')) || _gemius_visibility_pages() || _gemius_visibility_user()) {
     return;
   }
 
-  $script = 'var pp_gemius_identifier = new String(\''.$key.'\');';
-  drupal_add_js($script, 'inline', 'header');
-  drupal_add_js(drupal_get_path('module', 'gemius').'/xgemius.js', '', 'header');
+  // Generate the script to include in the header.
+  $js_string = '<!-- (C)2000-2011 Gemius SA - gemiusAudience / m2_m.samvirke.dk / Main Page -->
+  <script type="text/javascript">
+  <!--//--><![CDATA[//><!--
+  var pp_gemius_identifier = new String(\'' . $key . '\');
+  //--><!]]>
+  </script>
+  <script type="text/javascript" src="http://gadk.hit.gemius.pl/xgemius_ls.js"></script>';
+
+  // Add the script in the <head> area of the site.
+  drupal_set_html_head($js_string);
 }
 
 /*
  * @return true if page allowed
  */
-function _gemius_visibility_pages(){
-
+function _gemius_visibility_pages() {
   $pages = variable_get('gemius_pages', '');
 
   $path = drupal_get_path_alias($_GET['q']);
@@ -61,7 +67,7 @@ function _gemius_visibility_pages(){
  *
  * @return true if user is allowed
  */
-function _gemius_visibility_user(){
+function _gemius_visibility_user() {
   global $user;
 
   $enabled = FALSE;
